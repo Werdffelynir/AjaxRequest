@@ -119,36 +119,63 @@ btn2.onclick = function(){
 
 
 ### AjGet
-Синтаксис: `AjGet(url, data, callback, type) : XMLHttpRequest`
+Синтаксис: `AjGet(url, data, callback, response) : XMLHttpRequest`
+
+Выполняет GET запрос по `url`, передает данные `data`, по событию `onloadend` выполняется функция `callback`, можно установить тип ожидаемых даннх `response`
 
 Пример использования
 ```
-//code
+AjGet('script.php', 'get=data', onComplete);
+
+function onComplete(status, response){
+    if(status < 400) content.innerHTML = response;
+    else content.innerHTML = 'Error. Code ' + status;
+}
 ```
+
 
 ### AjPost
-Синтаксис: `AjPost(url, data, callback, type) : XMLHttpRequest`
+Синтаксис: `AjPost(url, data, callback, response) : XMLHttpRequest`
+
+Аналогично методу `AjGet()` только запрос `POST`.
 
 Пример использования
 ```
-//code
+AjPost('script.php', 'get=data', function(s,d,x,e){ content.innerHTML = (s<400)?d:'Error code '+s; } );
 ```
+
 
 ### AjHead
 Синтаксис: `AjHead(url, data, callback, headers) : XMLHttpRequest`
 
+Параметр `headers` принимает объект дополнительных заголовков.
+
 Пример использования
 ```
-//code
+AjHead('script.php', 'get=data', onComplete);
+
+function onComplete(status, xhr){
+    if(status == 200) {
+        var server = xhr.getResponseHeader('Server');
+    }
+}
 ```
+
 
 ### AjLoad
 Синтаксис: `AjLoad(url, data, callback, method, type) : XMLHttpRequest`
 
 Пример использования
 ```
-//code
+AjLoad('to_load.html', null, onComplete);
+
+function onComplete(status, response, xhr, event){
+    if(status == 200) {
+        content.innerHTML = response;
+    }
+}
 ```
+
 
 ### AjForm
 Синтаксис: `AjForm(form, data, callback) : XMLHttpRequest`
@@ -158,6 +185,7 @@ btn2.onclick = function(){
 //code
 ```
 
+
 ### AjScript
 Синтаксис: `AjScript(url, data, callback) : void`
 
@@ -165,6 +193,7 @@ btn2.onclick = function(){
 ```
 //code
 ```
+
 
 ### UtilEncode
 Синтаксис: `UtilEncode(data) : String`

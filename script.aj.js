@@ -128,14 +128,14 @@
          * @param url
          * @param data
          * @param callback
-         * @param type
+         * @param response
          */
-        get:function(url, data, callback, type){
+        get:function(url, data, callback, response){
             var params = {
                 url:url,
                 data:data || '',
                 method:'GET',
-                type:type || 'html',
+                response:response || 'html',
                 contentType:'text/html; charset=utf-8',
                 onComplete:callback
             };
@@ -145,12 +145,12 @@
         },
 
 
-        post:function(url, data, callback, type){
+        post:function(url, data, callback, response){
             var params = {
                 url:url,
                 data:data || '',
                 method:'POST',
-                type:type || 'html',
+                response:response || 'html',
                 onComplete:callback
             };
             var ajax = new AjaxRequest.open(params);
@@ -180,12 +180,12 @@
         },
 
 
-        load:function(url, data, callback, method, type){
+        load:function(url, data, callback, method, contentType){
             var params = {
                 url:url,
                 data:data || '',
                 method: method || 'GET',
-                contentType:type || 'text/html; charset=utf-8',
+                contentType:contentType || 'text/html; charset=utf-8',
                 onComplete:callback
             };
             var ajax = new AjaxRequest.open(params);
