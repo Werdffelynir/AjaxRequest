@@ -182,15 +182,21 @@ function onComplete(status, response, xhr, event){
 
 
 ### AjForm
-Синтаксис: `AjForm(form, data, callback) : XMLHttpRequest`
+Синтаксис: `AjForm(form, param, callback) : XMLHttpRequest`
 
-Упрощенный запрос формы. Принимает элемент формы `form`. Дополнительные данные `data` для передачи. После полного завершении запроса выполняется метод `callback`, `callback` вызывается по событию `onloadend` (`onComplete` в скрипте)
+Упрощенный запрос формы. Принимает элемент формы `form`. Объект параметров `param`, включает ключи: 
+`param.data` - дополнительные поля для передачи в виде объекта, 
+`param.url` - адрес отправки, по умолчанию с формы атрибута `action`, 
+`param.method` - метод отправки, по умолчанию с формы атрибута `method` или `POST`, 
+`param.contentType` - заголовок, по умолчанию с формы атрибута `enctype`.
+После полного завершении запроса выполняется метод `callback`, `callback` вызывается по событию `onloadend` (`onComplete` в скрипте)
 
 Пример использования
 ```
 var myForm = document.forms.myform;
+var session = {user:'someSessionKey'};
 
-AjForm(myForm, null, onComplete);
+AjForm(myForm, {data:session}, onComplete);
 
 function onComplete(status, response, xhr, event){
     if(status == 200) {
@@ -204,6 +210,8 @@ function onComplete(status, response, xhr, event){
 ### AjScript
 Синтаксис: `AjScript(url, data, callback) : void`
 
+Загружает скрипт. Реализуя способ получения данных JSONP
+
 Пример использования
 ```
 //code
@@ -212,31 +220,53 @@ function onComplete(status, response, xhr, event){
 
 ### UtilEncode
 Синтаксис: `UtilEncode(data) : String`
-```
 
+Дополнительно, кодирование объекта в URL строку.
+
+```
+//code
 ```
 
 
 ### UtilParseUrl
 Синтаксис: `UtilParseUrl(url) : Object`
 
+Дополнительно, парсит указаный url или текущий на составные.
+
 Пример использования
 ```
-//code
+var pUrl = UtilParseUrl('http://example.com:3000/pathname/?search=test#hash');
+pUrl.protocol   // http:
+pUrl.host       // example.com:3000
+pUrl.hostname   // example.com
+pUrl.port       // 3000
+pUrl.pathname   // /pathname/
+pUrl.hash       // #hash
+pUrl.search     // ?search=test
+pUrl.get        // Object = {search:'test'}
+
 ```
 
 ### UtilParseGet
 Синтаксис: `UtilParseGet(url) : Object`
 
+Дополнительно, парсит указаный url или текущий выберая параметры GET. Возвращает объект.
+
 Пример использования
 ```
-//code
+var getParams = UtilParseGet();
 ```
 
 ### UtilFormData
 Синтаксис: `UtilFormData(form, asObject) : String|Object`
 
+Дополнительно, конвертирует форму по умолчанию в строку (asObject=false) URL параметров или объект (asObject=true). Возвращаемый объект не является екземпляром объекта FormData.
+
 Пример использования
 ```
-//code
+var myForm = document.forms.myform;
+
+var formUrl = UtilFormData(myForm);
+
+var formObj = UtilFormData(myForm,true);
 ```

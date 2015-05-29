@@ -193,7 +193,13 @@
             return ajax.xhr;
         },
 
-
+        /**
+         *
+         * @param form      nodeElement
+         * @param data      object() with parameters keys: data, url, method, contentType
+         * @param callback  Function
+         * @returns {null|*}
+         */
         form:function(form, data, callback){
             if(typeof form === 'object' && form.nodeName == 'FORM'){
 
@@ -202,7 +208,7 @@
 
                 params.url = params.url || form.action || document.location;
                 params.method = params.method || form.method || 'POST';
-                params.contentType = false || form.enctype;
+                params.contentType = params.contentType || form.enctype;
                 params.data = new FormData(form);
 
                 for(var key in paramsAppend)
