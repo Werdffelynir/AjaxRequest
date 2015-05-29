@@ -9,15 +9,15 @@ require ECMAScript5
 ### Aj
 Syntax: `Aj(params) : Object`
 
-Aj - Базовый метод выполняющий всю работу над запросом. Дополнительные методы (AjGet, AjPost...) радотаю посредством этого метода.
-Принимает объект параметров, все возможные параметры расмотренны ниже. Возвращает объект:
+Aj - Базовый метод выполняющий всю работу над запросом. Дополнительные методы (AjGet, AjPost...) работают посредством этого метода. 
+Принимает объект параметров, все возможные параметры рассмотрены ниже. Возвращает объект:
 ```
 Object:paramsDefault    // Параметры по умолчанию
 Object:params           // Параметры установленные
 Object:xhr              // Объект XMLHttpRequest, доступен после выполнение запроса
-Object:send([params])     // Выполнение запроса, может добавить/изменить параметры
+Object:send([params])   // Выполнение запроса, дополнительно добавить/изменить параметры
 ```
-При обявлении метода Aj() запрос не выполнятся, эту ношу берет на себя возвращаемый им метод `send([params])`, который к тому же может принимать параметры как и Aj(params) перезаписывя их. Так же `send([params])` может использоваться повторно.
+При объявлении метода Aj() запрос не выполнятся, эту ношу берет на себя возвращаемый им метод `send([params])`, который к тому же может принимать параметры как и Aj(params) перезаписывая их. Так же `send([params])` может использоваться повторно.
 
 
 #### Пример использования
@@ -103,7 +103,7 @@ btn2.onclick = function(){
     // Тип: String
     contentType:'application/x-www-form-urlencoded',
     
-    // Функции выполения по собитию
+    // Методы собитий
     // Тип: Function
     onComplete: function(status, response, xhr, event){},
     onProgress: function(xhr, event){},
@@ -121,7 +121,7 @@ btn2.onclick = function(){
 ### AjGet
 Синтаксис: `AjGet(url, data, callback, response) : XMLHttpRequest`
 
-Выполняет GET запрос по `url`, передает данные `data`, по событию `onloadend` выполняется функция `callback`, можно установить тип ожидаемых даннх `response`
+Выполняет GET запрос по `url`, передает данные `data`, по событию `onloadend` (`onComplete` в скрипте) выполняется функция `callback`, можно установить тип ожидаемых даннх `response`
 
 Пример использования
 ```
@@ -141,7 +141,9 @@ function onComplete(status, response){
 
 Пример использования
 ```
-AjPost('script.php', 'get=data', function(s,d,x,e){ content.innerHTML = (s<400)?d:'Error code '+s; } );
+AjPost('script.php', 'get=data', function(s,d,x,e){ 
+    content.innerHTML = (s<400)?d:'Error code '+s; 
+});
 ```
 
 
@@ -165,6 +167,8 @@ function onComplete(status, xhr){
 ### AjLoad
 Синтаксис: `AjLoad(url, data, callback, method, type) : XMLHttpRequest`
 
+Загружает файл по адресу `url`. Возможно передать данные `data`. По полном завершении запроса выполняется метод `callback`, `callback` вызывается по событию `onloadend` (`onComplete` в скрипте)
+
 Пример использования
 ```
 AjLoad('to_load.html', null, onComplete);
@@ -180,9 +184,20 @@ function onComplete(status, response, xhr, event){
 ### AjForm
 Синтаксис: `AjForm(form, data, callback) : XMLHttpRequest`
 
+Упрощенный запрос формы. Принимает элемент формы `form`. Дополнительные данные `data` для передачи. После полного завершении запроса выполняется метод `callback`, `callback` вызывается по событию `onloadend` (`onComplete` в скрипте)
+
 Пример использования
 ```
-//code
+var myForm = document.forms.myform;
+
+AjForm(myForm, null, onComplete);
+
+function onComplete(status, response, xhr, event){
+    if(status == 200) {
+        content.innerHTML = 'Data send';
+        // or other code ...
+    }
+}
 ```
 
 
