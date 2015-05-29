@@ -224,7 +224,12 @@ function onComplete(status, response, xhr, event){
 Дополнительно, кодирование объекта в URL строку.
 
 ```
-//code
+var data = {
+    name:'Jhon Smit',
+    age:25,
+};
+
+UtilEncode(data) // name=Jhon%20Smit&age=25.
 ```
 
 
