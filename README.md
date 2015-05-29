@@ -225,11 +225,11 @@ function onComplete(status, response, xhr, event){
 
 ```
 var data = {
-    name:'Jhon Smit',
+    name:'John Smith',
     age:25,
 };
 
-UtilEncode(data) // name=Jhon%20Smit&age=25.
+UtilEncode(data) // name=John%Smith&age=25
 ```
 
 
@@ -249,7 +249,6 @@ pUrl.pathname   // /pathname/
 pUrl.hash       // #hash
 pUrl.search     // ?search=test
 pUrl.get        // Object = {search:'test'}
-
 ```
 
 ### UtilParseGet
