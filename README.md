@@ -271,6 +271,5 @@ var getParams = UtilParseGet();
 var myForm = document.forms.myform;
 
 var formUrl = UtilFormData(myForm);
-
 var formObj = UtilFormData(myForm,true);
 ```
