@@ -1,23 +1,16 @@
 (function (window) {
 
+    "use strict";
+
     /**
      * @namespace AjaxRequest
      */
     var AjaxRequest = window.AjaxRequest = {
 
-
         version:1,
 
-
         open:function(params){
-
-
-            "use strict";
-
-
             var obj = {};
-
-
             obj.paramsDefault =  {
 
                 url:document.location,
@@ -30,7 +23,6 @@
                 password:'',
                 response:'text',
                 contentType:'application/x-www-form-urlencoded; charset=utf-8',
-
                 onComplete: function(e){},
                 onProgress: function(e){},
                 onTimeout: function(e){},
@@ -44,7 +36,7 @@
             };
 
 
-            obj.params = AjaxRequest.objectMerge(params,obj.paramsDefault);
+            obj.params = AjaxRequest.objectMerge(params, obj.paramsDefault);
 
 
             obj.xhr = null;
@@ -166,7 +158,7 @@
         head:function(url, data, callback, headers){
             var callbackResult = function(status, response, xhr, event){
                 callback(status,xhr);
-            }
+            };
             var params = {
                 url:url,
                 data:data || '',
@@ -182,8 +174,8 @@
 
         load:function(url, data, callback, method, contentType){
             var params = {
-                url:url,
-                data:data || '',
+                url: url,
+                data: data || '',
                 method: method || 'GET',
                 contentType:contentType || 'text/html; charset=utf-8',
                 onComplete:callback
@@ -225,19 +217,19 @@
         },
 
 
-        script:function(url, data, callback){
+        script:function(url, data, callback, callbackSuccess, callbackError){
             var dataString = '';
 
             if(callback) {
-                if(url.indexOf('?') >= 0)
-                    url += '&callback=' + callback.name;
+                if(url.indexOf('?') === -1)
+                    url += '&callback=' + callback;
                 else
-                    url += '?callback=' + callback.name;
+                    url += '?callback=' + callback;
             }
 
             if(data) {
                 dataString = AjaxRequest.encodeData(data);
-                if(url.indexOf('?') >= 0)
+                if(url.indexOf('?') === -1)
                     url += '&' + dataString;
                 else
                     url += '?' + dataString;
@@ -251,6 +243,13 @@
             script.setAttribute('type', 'application/javascript');
             script.setAttribute('src', url);
 
+            script.onload = function(event){
+                callbackSuccess.call(event);
+            };
+            script.onerror = function(event){
+                callbackError.call(event)
+            };
+
             document.body.appendChild(script);
         },
 
@@ -258,7 +257,15 @@
         message:function(element,data,append){},
 
 
-        jsonp:function(url, callbackSuccess, callbackError){},
+        scriptRemove:function(url){
+            var scripts = document.querySelector('script');
+            if(scripts){
+                for(var i=0;i<scripts.length;i++){
+                    if(scripts[i].indexOf(url) !== -1)
+                        document.body.removeChild(scripts[i]);
+                }
+            }
+        },
 
 
         /**
@@ -407,8 +414,8 @@
 
     if (!window.UtilEncode) {
         /**
-         * Alias for AjaxRequest.script
-         * @namespace AjScript
+         * Alias for AjaxRequest.encodeData
+         * @namespace UtilEncode
          */
         window.UtilEncode = AjaxRequest.encodeData;
     }
