@@ -107,6 +107,20 @@
         }
         return (asObject == true) ? obj : str;
     };
+    util.jsonToObj = function(str){
+        var res = false;
+        try{
+            res = JSON.parse(str);
+        }catch(error){}
+        return res;
+    };
+    util.objToJson = function(obj){
+        var res = false;
+        try{
+            res = JSON.stringify(obj);
+        }catch(error){}
+        return res;
+    };
 
     /**************************************| Aj |**************************************/
 
@@ -284,13 +298,14 @@
         var params = {
             url: url,
             data: data || '',
-            method: 'GET',
+            method: aj.load.method,
             contentType:contentType || 'text/html; charset=utf-8',
             onComplete:callback
         };
         var ajax = aj.open(params);
         return ajax.send();
     };
+    aj.load.method = 'GET';
 
     aj.request = function(method, url, data, callback, contentType){
         var params = {
@@ -304,6 +319,13 @@
         return ajax.send();
     };
 
+    /**
+     *
+     * @param form
+     * @param config
+     * @param callback
+     * @returns {*}
+     */
     aj.form = function(form, config, callback){
 
         if(typeof form === 'object' && form.nodeName == 'FORM'){
@@ -340,6 +362,8 @@
     aj.worker = function(file, callback, callbackError){
         if (!!window.Worker) {
             var worker = new Worker(file);
+            if(typeof callbackError === 'function')
+                worker.onerror = callbackError;
             if(worker)
                 callback.call(aj.self, worker);
             else
@@ -350,6 +374,145 @@
             aj.consoleError('ERROR! ' + errorMessage);
         }
     };
+
+    aj.json = function(url, data, callback, callbackError){
+        if(typeof data === 'object') data = util.objToJson(data);
+        var params = {
+            url: url,
+            data:  data || '',
+            method: aj.json.method,
+            contentType: 'application/json; charset=utf-8',
+            onComplete: function(status,response){
+                if(status < 400){
+                    if(typeof response === 'string'){
+                        var _response = util.jsonToObj(response);
+                        if(_response)
+                            response = _response;
+                    }
+                }else{
+                    callbackError.call(aj.self, status, response);
+                    return;
+                }
+                callback.call(aj.self, status, response);
+            },
+            onError: callbackError
+        };
+        var ajax = aj.open(params);
+        return ajax.send();
+    };
+    aj.json.method = 'GET';
+
+    /*aj.script = function(url, data, callbackParameter, callbackSuccess, callbackError){
+        var dataString = '';
+        if(callbackParameter) {
+            if(url.indexOf('?') === -1) url += '&callback=' + callbackParameter;
+            else url += '?callback=' + callbackParameter;
+        }
+        if(data) {
+            dataString = AjaxRequest.encodeData(data);
+            if(url.indexOf('?') === -1) url += '&' + dataString;
+            else url += '?' + dataString;
+        }
+
+        var script = document.querySelector('script[src="' + url + '"]');
+        if(script)
+            document.body.removeChild(script);
+
+        script = document.createElement('script');
+        script.setAttribute('type', 'application/javascript');
+        script.setAttribute('src', url);
+
+        script.onload = function(event){
+            callbackSuccess.call(event);
+        };
+        script.onerror = function(event){
+            callbackError.call(event)
+        };
+
+        document.body.appendChild(script);
+    };*/
+
+// при успехе вызовет onSuccess, при ошибке onError
+    aj.script = function(url, onSuccess, onError) {
+
+        var scriptOk = false; // флаг, что вызов прошел успешно
+
+        // сгенерировать имя JSONP-функции для запроса
+        var callbackName = 'cb' + String(Math.random()).slice(-6);
+
+        // укажем это имя в URL запроса
+        url += ~url.indexOf('?') ? '&' : '?';
+        url += 'callback=AjScript.registry.' + callbackName;
+
+        // ..и создадим саму функцию в реестре
+        aj.script.registry[callbackName] = function(data) {
+            scriptOk = true; // обработчик вызвался, указать что всё ок
+            delete aj.script.registry[callbackName]; // можно очистить реестр
+            onSuccess(data); // и вызвать onSuccess
+        };
+
+        // эта функция сработает при любом результате запроса
+        // важно: при успешном результате - всегда после JSONP-обработчика
+        function checkCallback() {
+            if (scriptOk) return; // сработал обработчик?
+            delete aj.script.registry[callbackName];
+            onError(url); // нет - вызвать onError
+        }
+
+        var script = document.createElement('script');
+
+        // в старых IE поддерживается только событие, а не onload/onerror
+        // в теории 'readyState=loaded' означает "скрипт загрузился",
+        // а 'readyState=complete' -- "скрипт выполнился", но иногда
+        // почему-то случается только одно из них, поэтому проверяем оба
+        script.onreadystatechange = function() {
+            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                this.onreadystatechange = null;
+                setTimeout(checkCallback, 0); // Вызвать checkCallback - после скрипта
+            }
+        };
+
+        // события script.onload/onerror срабатывают всегда после выполнения скрипта
+        script.onload = script.onerror = checkCallback;
+        script.src = url;
+
+        document.body.appendChild(script);
+    };
+
+    aj.script.registry = {}; // реестр
+
+
+
+    aj.jsonp = function(){
+        var registry = aj.jsonp.registry;
+
+        function jsonp(uri, callback) {
+            function jsonpResponse() {
+                try { delete registry[src] } catch(e) {
+                    registry[src] = null
+                }
+                html.removeChild(script);
+                callback.apply(this, arguments);
+            }
+            var src = prefix + id++,
+                script = document.createElement("script");
+            registry[src] = jsonpResponse;
+            html.insertBefore(script, html.lastChild).src = uri + "=" + src;
+        }
+        var
+            id = 0,
+            prefix = "__JSONP__",
+            html = document.documentElement,
+            head = document.head;
+        return jsonp;
+    }();
+    aj.jsonp.registry = {}; // реестр
+
+
+
+
+
+
 
 
     /**
@@ -363,13 +526,14 @@
     window.AjLoad = aj.load;
     window.AjRequest = aj.request;
     window.AjForm = aj.form;
-    window.AjJson = aj;
-    window.AjJsonp = aj;
+    window.AjJson = aj.json;
+    window.AjJsonp = aj.jsonp;
+    window.AjScript = aj.script;
     window.AjWorker = aj.worker;
     window.AjUpload = aj;
     window.AjAddScript = aj;
     window.AjAddStyle = aj;
-    window.Aj.util = util;
+    window.AjUtil = util;
 
 })(window);
 

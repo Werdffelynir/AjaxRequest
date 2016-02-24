@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+</div>
+
+
+
+
+<script>
+
+    var container = document.querySelector('.container');
+
+    AjJson('data/test.json', null, function(statusCode, data){
+        console.log(statusCode + ' Result: ', data);
+
+        if(typeof data === 'object'){
+            data.map(function(rec){
+                var p = document.createElement('p');
+                p.innerHTML = rec['id'] + ' // ' + rec['name'] + ' // ' + rec['description'];
+                container.appendChild(p);
+            });
+        }
+
+    }, function(error){
+        console.log('Error: ', error);
+    });
+
+</script>
+</body>
+</html>

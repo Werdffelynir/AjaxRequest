@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+</div>
+
+
+
+
+<script>
+
+    var container = document.querySelector('.container');
+
+    AjJsonp('jsonp.php?callback', function (a, b, c) {
+        document.body.innerHTML += [a, b, c].join(" ") + "<br />";
+    });
+
+</script>
+</body>
+</html>
