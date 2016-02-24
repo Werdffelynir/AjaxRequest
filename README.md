@@ -1,4 +1,5 @@
-# Simple AJAX request
+# Script Aj
+#### Simple use AJAX request of Javascript XMLHttpRequest 
 
 require ECMAScript5
 
