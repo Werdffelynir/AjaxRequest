@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+</div>
+
+
+
+
+<script>
+    var container = document.querySelector('.container');
+
+
+    var headers = {
+//        'Cache-Control':'',
+//        'Content-Language':'',
+//        'Content-Type':'',
+//        'Expires':'',
+//        'Last-Modified':'',
+//        'Pragma':'',
+//        'X-Auth':'Vasia',
+//        'Content-Type' : 'application/json',
+//        'Content-Type':'javascript/json; charset=utf-8',
+//        'X-Requested-With':'XMLHttpRequest',
+//        'Connection':'open...'
+//        'Accept':'application/javascript Call.method var=value&var=value',
+//        'X-Uid': '0123',
+//        'X-Authorization': '2c9de507f2c54aa1',
+//        'Access-Control-Expose-Headers': 'X-Uid, X-Authentication',
+//        'Access-Control-Allow-Origin':'http://localhost'
+        'X-DATA-CLIENT':'Call.method var=value&var=value'
+    };
+
+    AjHead('server.php?func=head', headers, function(status, xhr){
+
+        var server = xhr.getResponseHeader('X-DATA-SERVER');
+        var result = 'Result: status = ' + status + ' X-DATA-SERVER = ' + server;
+        var allHeaders = xhr.getAllResponseHeaders();
+        container.innerHTML = '<h3>'+result+'</h3>'+'<pre>'+allHeaders+'</pre>';
+    });
+
+</script>
+</body>
+</html>

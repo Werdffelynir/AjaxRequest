@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+</div>
+
+
+
+
+<script>
+
+    var container = document.querySelector('.container');
+
+    Aj({
+
+        url:        'data/test.json',
+        data:       '',
+        async:      true,
+        method:     'GET',
+        timeout:    0,
+        headers:    {'X-Requested-With':'XMLHttpRequest'},
+        username:   '',
+        password:   '',
+        credentials: false,
+        response:   'text',
+        contentType:'application/x-www-form-urlencoded; charset=utf-8',
+        onComplete: function(status, response){
+
+            console.log(status, response);
+
+            container.innerHTML = '<h3>Status: '+status+'</h3>'+'<pre>'+response+'</pre>';
+        },
+        onProgress: function(e){},
+        onTimeout:  function(e){},
+        onSuccess:  function(e){},
+        onBefore:   function(e){},
+        onChange:   function(e){},
+        onError:    function(e){},
+        onAbort:    function(e){},
+        onStart:    function(e){}
+
+    }).send();
+
+</script>
+</body>
+</html>

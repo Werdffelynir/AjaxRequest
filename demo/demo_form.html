@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+    <form id="simple_form" action="server.php" method="post">
+        <input name="email" type="text">
+        <input name="password" type="text">
+        <input type="submit" value="Send">
+    </form>
+    
+
+</div>
+
+
+
+
+<script>
+    var container = document.querySelector('.container'),
+        form = document.getElementById('simple_form');
+
+    form.onsubmit = function(event){
+        event.preventDefault();
+
+        AjForm(form,{
+            method: 'POST',
+            data:   {func:'get_form'}},
+            function(status, request){
+                console.log('status: ' + status);
+                container.innerHTML = '<h3>Status: '+status+'</h3>'+'<pre>'+request+'</pre>';
+            }
+        );
+    }
+
+
+
+
+
+</script>
+</body>
+</html>

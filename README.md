@@ -3,9 +3,7 @@
 
 require ECMAScript5
 
-
 ## methods
-
 
 ### Aj
 Syntax: `Aj(params) : Object`

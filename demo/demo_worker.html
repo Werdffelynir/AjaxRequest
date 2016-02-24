@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aj demo simple</title>
+
+    <style>
+        *{margin:0; padding: 0}
+        html, body{}
+        #page{width:860px; margin:0 auto}
+        .container{background-color: beige; padding: 4px}
+    </style>
+
+    <script src="../src/script.aj_0.1.0.js"></script>
+</head>
+<body>
+
+<div id="page">
+
+    <div class="container"></div>
+
+    <p>Main file:</p>
+
+    <pre>
+    // Message send to worker
+    worker.postMessage( [ firstValue, secondValue ] );
+
+    // Message received from worker
+    worker.onmessage = function(e) {
+        result.textContent = e.data;
+    }
+    </pre>
+
+        <p>Worker file:</p>
+
+    <pre>
+    window.onmessage = function(event) {
+        // Response data:
+        var result = event.data[0] + ' ' + event.data[1]
+
+        // Message send to main script
+        e.postMessage('send string');
+    }
+    </pre>
+
+</div>
+
+
+
+
+
+
+<script>
+
+    var container = document.querySelector('.container');
+
+    AjWorker('worker.js', function(worker){
+
+        var sendData = {
+            email:'email@email.com',
+            name: 'Simple Name'
+        };
+
+        // Message send to worker
+        worker.postMessage(sendData);
+
+        // Message received from worker
+        worker.onmessage = function(event) {
+            var response = event.data;
+
+            console.log(response);
+
+            container.innerHTML = response.result;
+        }
+
+    });
+
+</script>
+</body>
+</html>

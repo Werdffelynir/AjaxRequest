@@ -19,7 +19,7 @@
         headers:    {'X-Requested-With':'XMLHttpRequest', 'Content-Type':'application/x-www-form-urlencoded; charset=utf-8'},
         username:   '',
         password:   '',
-        credentials: false,
+        credentials:false,
         response:   'text',
         contentType:'',
         onComplete: function(e){},
@@ -330,7 +330,26 @@
             aj.consoleError('ERROR! Element not nodeName = FORM!');
     };
 
-
+    /**
+     * Web Worker
+     *
+     * @param file              worker file
+     * @param callback          handler function, first argument it`is worker
+     * @param callbackError     handler error
+     */
+    aj.worker = function(file, callback, callbackError){
+        if (!!window.Worker) {
+            var worker = new Worker(file);
+            if(worker)
+                callback.call(aj.self, worker);
+            else
+                callbackError.call(aj.self, worker);
+        }else{
+            var errorMessage = 'Browser does not support workers';
+            callbackError.call(aj.self, errorMessage);
+            aj.consoleError('ERROR! ' + errorMessage);
+        }
+    };
 
 
     /**
@@ -346,7 +365,7 @@
     window.AjForm = aj.form;
     window.AjJson = aj;
     window.AjJsonp = aj;
-    window.AjMessage = aj;
+    window.AjWorker = aj.worker;
     window.AjUpload = aj;
     window.AjAddScript = aj;
     window.AjAddStyle = aj;
