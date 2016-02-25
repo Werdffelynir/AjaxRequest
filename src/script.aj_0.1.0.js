@@ -133,7 +133,7 @@
         }
         aj.xhr = null;
         aj.config = util.merge(config, internal.configDefault);
-
+console.log(aj.config);
         // internal object, as prototype it`is
         var o = {}; aj.self = o;
 
@@ -163,9 +163,14 @@
         } else {
             if(typeof conf.data === 'object' && conf.data instanceof FormData)
                 sendData = conf.data;
+            else if(typeof conf.data === 'object' && conf.data instanceof HTMLInputElement){
+                sendData = conf.data;
+            }
             else
                 sendData = util.encode(conf.data);
         }
+
+        console.log(sendData);
 
         xhr.open(
             method,
@@ -183,8 +188,14 @@
         }
 
         if(!(conf.data instanceof FormData)) {
+
+            if(conf.contentType){
+                conf.headers['Content-Type'] = conf.contentType;
+
             for(var key in conf.headers)
                 xhr.setRequestHeader(key, conf.headers[key]);
+
+            }
         }
 
         /* callbacks handlers */
@@ -402,18 +413,7 @@
     };
     aj.json.method = 'GET';
 
-    /*aj.script = function(url, data, callbackParameter, callbackSuccess, callbackError){
-        var dataString = '';
-        if(callbackParameter) {
-            if(url.indexOf('?') === -1) url += '&callback=' + callbackParameter;
-            else url += '?callback=' + callbackParameter;
-        }
-        if(data) {
-            dataString = AjaxRequest.encodeData(data);
-            if(url.indexOf('?') === -1) url += '&' + dataString;
-            else url += '?' + dataString;
-        }
-
+    aj.script = function(url, callbackSuccess, callbackError){
         var script = document.querySelector('script[src="' + url + '"]');
         if(script)
             document.body.removeChild(script);
@@ -430,85 +430,44 @@
         };
 
         document.body.appendChild(script);
-    };*/
-
-// при успехе вызовет onSuccess, при ошибке onError
-    aj.script = function(url, onSuccess, onError) {
-
-        var scriptOk = false; // флаг, что вызов прошел успешно
-
-        // сгенерировать имя JSONP-функции для запроса
-        var callbackName = 'cb' + String(Math.random()).slice(-6);
-
-        // укажем это имя в URL запроса
-        url += ~url.indexOf('?') ? '&' : '?';
-        url += 'callback=AjScript.registry.' + callbackName;
-
-        // ..и создадим саму функцию в реестре
-        aj.script.registry[callbackName] = function(data) {
-            scriptOk = true; // обработчик вызвался, указать что всё ок
-            delete aj.script.registry[callbackName]; // можно очистить реестр
-            onSuccess(data); // и вызвать onSuccess
-        };
-
-        // эта функция сработает при любом результате запроса
-        // важно: при успешном результате - всегда после JSONP-обработчика
-        function checkCallback() {
-            if (scriptOk) return; // сработал обработчик?
-            delete aj.script.registry[callbackName];
-            onError(url); // нет - вызвать onError
-        }
-
-        var script = document.createElement('script');
-
-        // в старых IE поддерживается только событие, а не onload/onerror
-        // в теории 'readyState=loaded' означает "скрипт загрузился",
-        // а 'readyState=complete' -- "скрипт выполнился", но иногда
-        // почему-то случается только одно из них, поэтому проверяем оба
-        script.onreadystatechange = function() {
-            if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                this.onreadystatechange = null;
-                setTimeout(checkCallback, 0); // Вызвать checkCallback - после скрипта
-            }
-        };
-
-        // события script.onload/onerror срабатывают всегда после выполнения скрипта
-        script.onload = script.onerror = checkCallback;
-        script.src = url;
-
-        document.body.appendChild(script);
     };
 
-    aj.script.registry = {}; // реестр
-
-
-
-    aj.jsonp = function(){
+    aj.jsonp = function(url, callback){
         var registry = aj.jsonp.registry;
-
-        function jsonp(uri, callback) {
-            function jsonpResponse() {
-                try { delete registry[src] } catch(e) {
-                    registry[src] = null
-                }
-                html.removeChild(script);
-                callback.apply(this, arguments);
+        function jsonpResponse() {
+            try { delete registry[src] } catch(e) {
+                registry[src] = null
             }
-            var src = prefix + id++,
-                script = document.createElement("script");
-            registry[src] = jsonpResponse;
-            html.insertBefore(script, html.lastChild).src = uri + "=" + src;
+            document.head.removeChild(script);
+            callback.apply(this, arguments);
         }
-        var
-            id = 0,
-            prefix = "__JSONP__",
-            html = document.documentElement,
-            head = document.head;
-        return jsonp;
-    }();
+        var src = 'cb' + String(Math.random()).slice(-10),
+            script = document.createElement("script");
+        registry[src] = jsonpResponse;
+        document.head.insertBefore(script, document.head.lastChild).src = url + "=AjJsonp.registry." + src;
+    };
     aj.jsonp.registry = {}; // реестр
 
+    aj.upload = function(url, inputFile, onProgress, onSuccess, onError){
 
+        var fd = new FormData();
+        fd.append(inputFile.name, inputFile.value);
+
+        var params = {
+            url: url,
+            data: fd,
+            method: aj.upload.method,
+            contentType: 'multipart/form-data',
+            headers: false,
+            onProgress: onProgress,
+            onComplete: onSuccess,
+            onError: onError
+        };
+
+        var ajax = aj.open(params);
+        return ajax.send();
+    };
+    aj.upload.method = 'POST';
 
 
 
@@ -530,9 +489,7 @@
     window.AjJsonp = aj.jsonp;
     window.AjScript = aj.script;
     window.AjWorker = aj.worker;
-    window.AjUpload = aj;
-    window.AjAddScript = aj;
-    window.AjAddStyle = aj;
+    window.AjUpload = aj.upload;
     window.AjUtil = util;
 
 })(window);

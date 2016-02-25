@@ -28,8 +28,8 @@
 
     var container = document.querySelector('.container');
 
-    AjScript('jsonp.php?callback', function (a, b, c) {
-        document.body.innerHTML += [a, b, c].join(" ") + "<br />";
+    AjScript('script.js', function () {
+        console.log(Module.One);
     });
 
 </script>
