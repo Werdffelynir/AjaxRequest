@@ -457,7 +457,7 @@ console.log(aj.config);
             url: url,
             data: fd,
             method: aj.upload.method,
-            contentType: 'multipart/form-data',
+            contentType: false,
             headers: false,
             onProgress: onProgress,
             onComplete: onSuccess,
