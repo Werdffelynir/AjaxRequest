@@ -107,17 +107,17 @@
         }
         return (asObject == true) ? obj : str;
     };
-    util.jsonToObj = function(str){
+    util.jsonToObj = function(string){
         var res = false;
         try{
-            res = JSON.parse(str);
+            res = JSON.parse(string);
         }catch(error){}
         return res;
     };
-    util.objToJson = function(obj){
+    util.objToJson = function(object){
         var res = false;
         try{
-            res = JSON.stringify(obj);
+            res = JSON.stringify(object);
         }catch(error){}
         return res;
     };
@@ -134,17 +134,10 @@
         aj.xhr = null;
         aj.config = util.merge(config, internal.configDefault);
 
-console.log(aj.config);
-
         // internal object, as prototype it`is
         var o = {}; aj.self = o;
 
         o.send = aj.send;
-
-
-
-
-
 
         aj.self = o;
         return o;
@@ -467,19 +460,8 @@ console.log(aj.config);
             onError: onError
         };
         var ajax = aj.open(params);
-
-        console.log(aj.xhr);
-
-        /*aj.xhr.upload.onprogress = function(event) {
-            //conf.onProgress.call(self, xhr, event);
-            onProgress.call(aj, aj.xhr, event);//log(event.loaded + ' / ' + event.total);
-        };*/
         return ajax.send(data);
     };
-
-
-
-
 
 
     /**
@@ -501,60 +483,3 @@ console.log(aj.config);
     window.AjUtil = util;
 
 })(window);
-
-/*
-https://github.com/sobstel/jsonp.js
-
-https://learn.javascript.ru/ajax-jsonp
-
-var JSONP = function(global){
-    // (C) WebReflection Essential - Mit Style
-    // 216 bytes minified + gzipped via Google Closure Compiler
-    function JSONP(uri, callback) {
-        function JSONPResponse() {
-            try { delete global[src] } catch(e) {
-                // kinda forgot < IE9 existed
-                // thanks @jdalton for the catch
-                global[src] = null
-            }
-            documentElement.removeChild(script);
-            callback.apply(this, arguments);
-        }
-        var
-            src = prefix + id++,
-            script = document.createElement("script")
-            ;
-        global[src] = JSONPResponse;
-        documentElement.insertBefore(
-            script,
-            documentElement.lastChild
-        ).src = uri + "=" + src;
-    }
-    var
-        id = 0,
-        prefix = "__JSONP__",
-        document = global.document,
-        documentElement = document.documentElement
-        ;
-    return JSONP;
-}(this);
-
-<script src="JSONP.js"></script>
-<script>
-this.onload = function () {
-    var many = 0;
-    JSONP("test.php?callback", function (a, b, c) {
-        this.document.body.innerHTML += [
-                a, b, ++many, c
-            ].join(" ") + "<br />";
-    });
-    JSONP("test.php?callback", function (a, b, c) {
-        this.document.body.innerHTML += [
-                a, b, ++many, c
-            ].join(" ") + "<br />";
-    });
-};
-</script>
-
-
-*/
