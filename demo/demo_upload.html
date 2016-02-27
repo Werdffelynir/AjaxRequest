@@ -40,23 +40,23 @@
         event.preventDefault();
         var file = document.querySelector('input[name=upload_file]');
         console.log(file);
-        AjUpload('upload.php', file, onProgress, onSuccess, onError);
+        AjUpload('upload.php', file, onSuccess, onError, onProgress);
     };
 
-    function onProgress(xhr, event){
-        console.log("onProgress", xhr);
-        console.log("onProgress", event);
-    }
     function onSuccess(status, response){
         console.log("onSuccess", status);
         console.log("onSuccess", response);
+        container.innerHTML = response;
     }
     function onError(status, xhr, event){
         console.log("onError", status);
         console.log("onError", xhr);
         console.log("onError", event);
     }
-
+    function onProgress(xhr, event){
+        console.log("onProgress", xhr);
+        console.log("onProgress", event);
+    }
 
 
 

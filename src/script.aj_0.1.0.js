@@ -133,7 +133,9 @@
         }
         aj.xhr = null;
         aj.config = util.merge(config, internal.configDefault);
+
 console.log(aj.config);
+
         // internal object, as prototype it`is
         var o = {}; aj.self = o;
 
@@ -148,14 +150,16 @@ console.log(aj.config);
         return o;
     };
 
-    aj.send = function() {
+    aj.send = function(data) {
 
         var sendData = null,
             sendStr = '',
             conf = aj.config,
             self = aj.self,
             method = conf.method.toUpperCase(),
-            xhr = new XMLHttpRequest();
+            xhr = aj.xhr = new XMLHttpRequest();
+
+        conf.data = data || conf.data;
 
         /*if((method == 'GET' || method == 'HEAD') && conf.data) {*/
         if(typeof conf.data === 'string' && conf.data.length > 2 && method != 'POST') {
@@ -187,15 +191,17 @@ console.log(aj.config);
             xhr.withCredentials = conf.credentials;
         }
 
-        if(!(conf.data instanceof FormData)) {
+        if(!(conf.data instanceof FormData) && typeof conf.headers === 'object') {
 
+            if(typeof conf.headers !== 'object') conf.headers = {};
             if(conf.contentType){
+
                 conf.headers['Content-Type'] = conf.contentType;
 
-            for(var key in conf.headers)
-                xhr.setRequestHeader(key, conf.headers[key]);
 
             }
+            for(var key in conf.headers)
+                xhr.setRequestHeader(key, conf.headers[key]);
         }
 
         /* callbacks handlers */
@@ -448,26 +454,28 @@ console.log(aj.config);
     };
     aj.jsonp.registry = {}; // реестр
 
-    aj.upload = function(url, inputFile, onProgress, onSuccess, onError){
-
-        var fd = new FormData();
-        fd.append(inputFile.name, inputFile.value);
-
+    aj.upload = function(url, inputFile, onSuccess, onError, onProgress){
+        var data = new FormData();
+        data.append(inputFile.name, inputFile.files[0]);
         var params = {
             url: url,
-            data: fd,
-            method: aj.upload.method,
-            contentType: false,
+            method: 'POST',
+            contentType: 'multipart/form-data',
             headers: false,
             onProgress: onProgress,
             onComplete: onSuccess,
             onError: onError
         };
-
         var ajax = aj.open(params);
-        return ajax.send();
+
+        console.log(aj.xhr);
+
+        /*aj.xhr.upload.onprogress = function(event) {
+            //conf.onProgress.call(self, xhr, event);
+            onProgress.call(aj, aj.xhr, event);//log(event.loaded + ' / ' + event.total);
+        };*/
+        return ajax.send(data);
     };
-    aj.upload.method = 'POST';
 
 
 
