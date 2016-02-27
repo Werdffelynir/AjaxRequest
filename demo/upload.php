@@ -1,13 +1,20 @@
 <?php
 
-print_r("<pre>");
-print_r($_FILES);
-print_r("</pre>");
+if(!empty($_FILES)){
+    $result = '';
+    $dir = 'uploads/';
+    foreach($_FILES as $id => $data){
 
-$uploadsDir = 'uploads/';
-$fileName = $_FILES['upload_file']['name'];
-$fileTmpName = $_FILES['upload_file']['tmp_name'];
+        $name = $_FILES[$id]['name'];
+        $tmp = $_FILES[$id]['tmp_name'];
+        $moveResult = move_uploaded_file($tmp, $dir.$name);
 
-move_uploaded_file($fileTmpName, $uploadsDir.$fileName);
+        $result .= "<p>File uploaded [$moveResult] Data: </p><pre>".print_r($data,true)."</pre>";
+    }
 
-echo "File is uploaded $fileName to dir [$uploadsDir.$fileName]";
+    echo $result;
+
+    print_r("<pre>");
+    print_r($_FILES);
+    print_r("</pre>");
+}

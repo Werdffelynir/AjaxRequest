@@ -128,31 +128,30 @@
     aj.open = function(config){
 
         if(typeof config !== 'object') {
-            aj.consoleError (config + ' is not object of configuration!');
-            return;
+            //aj.consoleError (config + ' is not object of configuration!');
+            //return;
+            config = internal.configDefault;
         }
-        aj.xhr = null;
+        aj.xhr = new XMLHttpRequest();
         aj.config = util.merge(config, internal.configDefault);
 
         // internal object, as prototype it`is
-        var o = {}; aj.self = o;
+        var o = {
+            send: aj.send,
+            xhr:  aj.xhr
+        };
 
-        o.send = aj.send;
-
-        aj.self = o;
-        return o;
+        return aj.self = o;
     };
 
-    aj.send = function(data) {
+    aj.send = function(config) {
 
         var sendData = null,
             sendStr = '',
-            conf = aj.config,
+            conf = typeof config === 'object' ? util.merge(config, aj.config): aj.config,
             self = aj.self,
             method = conf.method.toUpperCase(),
-            xhr = aj.xhr = new XMLHttpRequest();
-
-        conf.data = data || conf.data;
+            xhr = aj.xhr;
 
         /*if((method == 'GET' || method == 'HEAD') && conf.data) {*/
         if(typeof conf.data === 'string' && conf.data.length > 2 && method != 'POST') {
@@ -160,14 +159,12 @@
         } else {
             if(typeof conf.data === 'object' && conf.data instanceof FormData)
                 sendData = conf.data;
-            else if(typeof conf.data === 'object' && conf.data instanceof HTMLInputElement){
+            else if(typeof conf.data === 'object' && conf.data instanceof File){
                 sendData = conf.data;
             }
             else
                 sendData = util.encode(conf.data);
         }
-
-        console.log(sendData);
 
         xhr.open(
             method,
@@ -187,12 +184,8 @@
         if(!(conf.data instanceof FormData) && typeof conf.headers === 'object') {
 
             if(typeof conf.headers !== 'object') conf.headers = {};
-            if(conf.contentType){
+            if(conf.contentType) conf.headers['Content-Type'] = conf.contentType;
 
-                conf.headers['Content-Type'] = conf.contentType;
-
-
-            }
             for(var key in conf.headers)
                 xhr.setRequestHeader(key, conf.headers[key]);
         }
@@ -447,20 +440,36 @@
     };
     aj.jsonp.registry = {}; // реестр
 
-    aj.upload = function(url, inputFile, onSuccess, onError, onProgress){
-        var data = new FormData();
-        data.append(inputFile.name, inputFile.files[0]);
-        var params = {
-            url: url,
-            method: 'POST',
-            contentType: 'multipart/form-data',
-            headers: false,
-            onProgress: onProgress,
-            onComplete: onSuccess,
-            onError: onError
+    aj.upload = function(url, inputFile, onProgress, onComplete){
+
+        var ajax = aj.open();
+
+        if(inputFile instanceof HTMLInputElement){
+            inputFile = inputFile.files[0];
+        }else if(inputFile instanceof FileList){
+            inputFile = inputFile[0];
+        }else {
+            onComplete.call(aj.self, 1000);
+            aj.consoleError('ERROR! input file is not e file. Must have type - HTMLInputElement or FileList or File');
+            return false;
+        }
+
+        ajax.xhr.upload.onprogress = function(event){
+            onProgress.call(aj.self, ajax.xhr, event);
         };
-        var ajax = aj.open(params);
-        return ajax.send(data);
+
+        var formData = new FormData();
+        formData.append(inputFile.name, inputFile);
+        var configs = {
+            url: url,
+            data: formData,
+            method: 'POST',
+            contentType: false,
+            headers: false,
+            onComplete: onComplete
+        };
+
+        return ajax.send(configs);
     };
 
 

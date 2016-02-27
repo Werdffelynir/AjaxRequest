@@ -1,5 +1,6 @@
 <?php
 
+
 if(!empty($_REQUEST['func'])){
 
     $func = $_REQUEST['func'];
@@ -17,12 +18,6 @@ if(!empty($_REQUEST['func'])){
     function get_form(){
         print_r( "Email: {$_POST['email']} Password: {$_POST['password']} ");
     }
-
-
-
-
-
-
 
     if(function_exists($func)){
         call_user_func($func, 0);
