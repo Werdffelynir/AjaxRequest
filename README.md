@@ -78,11 +78,12 @@ AjJsonp ( url, callback )
 // Загрузчик файлов
 AjUpload ( url, inputFile, onSuccess, onError, onProgress )
 
+// Запрос с расширеными опциями
+AjRequest ( method, url, data, callback, contentType )
 
 // будут удалены следущие методы:
 AjLoad ( url, data, callback, contentType )
 AjLoad.method = 'GET'
-AjRequest ( method, url, data, callback, contentType )
 ```
 
 ## helps method

@@ -29,7 +29,6 @@
     var container = document.querySelector('.container');
 
     Aj({
-
         url:        'data/test.json',
         data:       '',
         async:      true,
@@ -42,9 +41,7 @@
         response:   'text',
         contentType:'application/x-www-form-urlencoded; charset=utf-8',
         onComplete: function(status, response){
-
             console.log(status, response);
-
             container.innerHTML = '<h3>Status: '+status+'</h3>'+'<pre>'+response+'</pre>';
         },
         onProgress: function(e){},
