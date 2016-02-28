@@ -127,11 +127,9 @@
 
     aj.open = function(config){
 
-        if(typeof config !== 'object') {
-            //aj.consoleError (config + ' is not object of configuration!');
-            //return;
-            config = internal.configDefault;
-        }
+        if(typeof config !== 'object') {}
+
+        config = typeof config !== 'object' ? internal.configDefault : config;
         aj.xhr = new XMLHttpRequest();
         aj.config = util.merge(config, internal.configDefault);
 
@@ -440,15 +438,24 @@
     };
     aj.jsonp.registry = {}; // реестр
 
+    /**
+     * Загрузчик файлов.
+     * Предназначен для загрузки только одного файла, но процессы могут быть параллельны
+     * @param url           путь до скрипта обработчика загрузки
+     * @param inputFile     елемент input | FileList | File
+     * @param onProgress
+     * @param onComplete
+     * @returns {*}
+     */
     aj.upload = function(url, inputFile, onProgress, onComplete){
 
-        var ajax = aj.open();
+        var ajax = new aj.open();
 
         if(inputFile instanceof HTMLInputElement){
             inputFile = inputFile.files[0];
         }else if(inputFile instanceof FileList){
             inputFile = inputFile[0];
-        }else {
+        }else if(inputFile instanceof File){}else {
             onComplete.call(aj.self, 1000);
             aj.consoleError('ERROR! input file is not e file. Must have type - HTMLInputElement or FileList or File');
             return false;

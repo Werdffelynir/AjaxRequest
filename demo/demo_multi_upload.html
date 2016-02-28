@@ -17,11 +17,10 @@
 
 <div id="page">
 
-
     <h1>File Upload</h1>
 
     <form name="simple_form" enctype="multipart/form-data">
-        <input name="upload_file" type="file">
+        <input name="upload_file" type="file" multiple>
         <input type="submit" value="Send">
     </form>
 
@@ -42,15 +41,23 @@
     form.onsubmit = function(event){
         event.preventDefault();
 
-        var file = document.querySelector('input[name=upload_file]');
-        AjUpload('upload.php', file, onProgress, onComplete);
+        var input = document.querySelector('input[name=upload_file]'),
+            files = input.files;
+
+        if(files.length > 0){
+            [].slice.call(files).map(function(file){
+                var xhr = AjUpload('upload.php', file, onProgress, onComplete);
+                xhr.fileName = file['name'];
+            });
+        }
     };
 
     function onProgress(xhr, event){
-        container.innerHTML = "<p>Progress: " + event['loaded'] + " / " + event['total'] + "</p>";
+        var log = "<p><b>" + xhr.fileName + "</b> progress: " + event['loaded'] + " / " + event['total'] + "</p>";
+        container.insertAdjacentHTML('beforeend', log);
     }
     function onComplete(status, response, xhr, event){
-        var log = "<h3>Complete. Status code: "+status+"</h3> response:<br><pre>" + response + "</pre>";
+        var log = "<h3>Loading <b>" + xhr.fileName + "</b> complete. Status code: "+status+"</h3> response:<br><pre>" + response + "</pre>";
         container.insertAdjacentHTML('beforeend', log);
     }
 
