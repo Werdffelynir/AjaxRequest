@@ -3,7 +3,7 @@
 
 require ECMAScript5
 
-## methods
+## Основа
 
 Метод Aj является базовым для выполнения запросов, низкий уровень.
 Аргументом может принимать объект конфигурации, если не указан конфигурация будет взята по умолчанию.
@@ -12,7 +12,6 @@ require ECMAScript5
 ```
 Aj ( [config:Object] ) : Object
 ```
-
 
 ### config
 Все свойства конфигурации запроса
@@ -40,7 +39,6 @@ onAbort:        function        Выполняет в конце операци�
 onStart:        function        Выполняет при старте операции
 ```
 
-
 ### Метод Aj возвращает объект текущей операции с методами send(), abort() и свойством xhr:
 ```
 object.xhr : XMLHttpRequest
@@ -49,44 +47,45 @@ object.abort() : function
 ```
 
 
+## Методы
+
 ```
-// 
+// Простой GET запрос
 AjGet ( url, data, callback, response ) 
 
-// 
+// Простой GET запрос
 AjPost ( url, data, callback, response ) 
 
-// 
+// Запросы на уровне заголовков
 AjHead ( url, headers, callback ) 
 
-// 
-AjLoad ( url, data, callback, contentType ) 
-AjLoad.method = 'GET'
-
-// 
-AjRequest ( method, url, data, callback, contentType )
-
-// 
+// Запрос на основе данных HTML формы
 AjForm ( form, config, callback ) 
 
-// 
+// Подключатель веб-воркеров
 AjWorker ( file, callback, callbackError ) 
 
-// 
+// Запрос для приема и передачи данных в формате JSON
 AjJson ( url, data, callback, callbackError )  
 AjJson.method = 'GET'
 
-// 
+// Подключения по url JavaScript скриптов, в конец элемента body
 AjScript ( url, callbackSuccess, callbackError )
 
-// 
+// Протокол JSONP, для обмена данными
 AjJsonp ( url, callback )
 
-// 
+// Загрузчик файлов
 AjUpload ( url, inputFile, onSuccess, onError, onProgress )
+
+
+// будут удалены следущие методы:
+AjLoad ( url, data, callback, contentType )
+AjLoad.method = 'GET'
+AjRequest ( method, url, data, callback, contentType )
 ```
 
-### helps method
+## helps method
 ```
 AjUtil.encode ( object ) 
 AjUtil.decode ( string )

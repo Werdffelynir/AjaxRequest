@@ -336,7 +336,7 @@
     };
 
     /**
-     * Запрос на основе данных с полей HTML формы
+     * Запрос на основе данных HTML формы
      * @param form
      * @param config
      * @param callback
@@ -426,7 +426,7 @@
     aj.json.method = 'GET';
 
     /**
-     * Подключения по url скрипта в конец елемента body
+     * Подключения по url JavaScript скриптов, в конец элемента body
      * @param url
      * @param callbackSuccess
      * @param callbackError
