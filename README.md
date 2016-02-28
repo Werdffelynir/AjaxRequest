@@ -5,42 +5,48 @@ require ECMAScript5
 
 ## methods
 
+Метод Aj является базовым для выполнения запросов, низкий уровень.
+Аргументом может принимать объект конфигурации, если не указан конфигурация будет взята по умолчанию.
+Конфигурация может быть установлена в методе .send() объекта что вернет Aj() метод
+
 ```
-Aj ( config ) : Object   
+Aj ( [config:Object] ) : Object
 ```
 
 
 ### config
-```
-url:            String. default location url
-data:           String|Object
-async:          Bool. default true,
-method:         String. default 'GET'
-timeout:        Numeric. default 0
-headers:        Object
-username:       String. 
-password:       String. 
-credentials:    Bool. default false
-response:       String. default 'text'
-contentType:    String. 
-onComplete:     function
-onProgress:     function
-onTimeout:      function
-onSuccess:      function
-onBefore:       function
-onChange:       function
-onError:        function
-onAbort:        function
-onStart:        function
-```
+Все свойства конфигурации запроса
 
-
-### Return object:
 ```
-object.send( [data] ):    function
+url:            String.         Строка URL адреса куда будет запрос
+data:           String|Object   Данные для передачи
+async:          Bool. true,     Асинхронный или синхронный запрос выполнить
+method:         String. 'GET'   HTTP Метод запроса 'GET' | 'POST' | 'PUT' | 'DELETE' ...
+timeout:        Numeric. 0      Время ожидания ответа. 0 - неуказано
+headers:        Object          Заголовки что будут отправлены {'Ket-Head':'value'}
+username:       String.         HTTP-аутентификация - username
+password:       String.         HTTP-аутентификация - password
+credentials:    Bool. false     Контроля доступа, "дипломированный" запрос, передают HTTP Cookies и информацию HTTP-аутентификации.
+response:       String. 'text'  Формат данных ответа с сервера 'html' | 'text' | 'xml' | 'json'
+contentType:    String.         Заголовок 'Content-Type', Вынесен в приоритет
+onComplete:     function        Выполняет по окончании операции при любом результате
+onProgress:     function        Выполняет в конце операции
+onTimeout:      function        Выполняет в конце операции
+onSuccess:      function        Выполняет в конце операции
+onBefore:       function        Выполняет в конце операции
+onChange:       function        Выполняет в конце операции
+onError:        function        Выполняет в конце операции
+onAbort:        function        Выполняет в конце операции
+onStart:        function        Выполняет при старте операции
 ```
 
 
+### Метод Aj возвращает объект текущей операции с методами send(), abort() и свойством xhr:
+```
+object.xhr : XMLHttpRequest
+object.send( [config:Object] ) : function
+object.abort() : function
+```
 
 
 ```

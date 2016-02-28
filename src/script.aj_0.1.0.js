@@ -125,6 +125,11 @@
     /**************************************| Aj |**************************************/
 
 
+    /**
+     * Base method for requests operations
+     * @param config
+     * @returns {{xhr: (XMLHttpRequest|*), send: (aj.send|*), abort: *}}
+     */
     aj.open = function(config){
 
         if(typeof config !== 'object') {}
@@ -135,13 +140,19 @@
 
         // internal object, as prototype it`is
         var o = {
-            send: aj.send,
-            xhr:  aj.xhr
+            xhr:    aj.xhr,
+            send:   aj.send,
+            abort:  aj.xhr.abort
         };
 
         return aj.self = o;
     };
 
+    /**
+     * Непосредственная отправка запроса.
+     * @param config
+     * @returns {XMLHttpRequest|*}
+     */
     aj.send = function(config) {
 
         var sendData = null,
@@ -247,12 +258,12 @@
     aj.consoleLog = function(message) {console.log('Aj info: ' + message)};
 
     /**
-     * Упрощенный GET запрос
+     * Простой GET запрос
      *
-     * @param url       config: url,        type: string
-     * @param data      config: data,       type: string|FormData
-     * @param callback  config: onComplete, type: function
-     * @param response  config: url,        type: string
+     * @param url       :String             Адрес запроса
+     * @param data      :String|FormData    Передаваемые данные
+     * @param callback  :Function           Выполняет по окончании операции при любом результате
+     * @param response  :String             Тип данных ответа
      * @returns {*}
      */
     aj.get = function(url, data, callback, response){
@@ -260,14 +271,13 @@
             url:url,
             data:data || '',
             method:'GET',
-            response:response || 'html',
+            response: response || 'html',
             contentType:'text/html; charset=utf-8',
             onComplete:callback
         };
         var ajax = aj.open(params);
         return ajax.send();
     };
-
     aj.post = function(url, data, callback, response){
         var params = {
             url:url,
@@ -280,6 +290,13 @@
         return ajax.send();
     };
 
+    /**
+     * Запросы на уровне заголовков
+     * @param url       Адрес запроса
+     * @param headers   Объект заголовков
+     * @param callback  Выполняет по окончании операции при любом результате
+     * @returns {*}
+     */
     aj.head = function(url, headers, callback){
         var callbackResult = function(status, response, xhr, event){
             callback.call(aj.self, status, xhr, event);
@@ -294,7 +311,6 @@
         var ajax = aj.open(params);
         return ajax.send();
     };
-
     aj.load = function(url, data, callback, contentType){
         var params = {
             url: url,
@@ -307,7 +323,6 @@
         return ajax.send();
     };
     aj.load.method = 'GET';
-
     aj.request = function(method, url, data, callback, contentType){
         var params = {
             url: url,
@@ -321,7 +336,7 @@
     };
 
     /**
-     *
+     * Запрос на основе данных с полей HTML формы
      * @param form
      * @param config
      * @param callback
@@ -355,7 +370,6 @@
 
     /**
      * Web Worker
-     *
      * @param file              worker file
      * @param callback          handler function, first argument it`is worker
      * @param callbackError     handler error
@@ -376,6 +390,14 @@
         }
     };
 
+    /**
+     * Запрос для приема и передачи данных в формате JSON
+     * @param url
+     * @param data
+     * @param callback
+     * @param callbackError
+     * @returns {*}
+     */
     aj.json = function(url, data, callback, callbackError){
         if(typeof data === 'object') data = util.objToJson(data);
         var params = {
@@ -403,6 +425,12 @@
     };
     aj.json.method = 'GET';
 
+    /**
+     * Подключения по url скрипта в конец елемента body
+     * @param url
+     * @param callbackSuccess
+     * @param callbackError
+     */
     aj.script = function(url, callbackSuccess, callbackError){
         var script = document.querySelector('script[src="' + url + '"]');
         if(script)
@@ -422,6 +450,11 @@
         document.body.appendChild(script);
     };
 
+    /**
+     * Протокол JSONP обмена данными
+     * @param url
+     * @param callback
+     */
     aj.jsonp = function(url, callback){
         var registry = aj.jsonp.registry;
         function jsonpResponse() {
