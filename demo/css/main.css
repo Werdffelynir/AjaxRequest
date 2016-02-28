@@ -1,0 +1,106 @@
+html, body{
+    /*background-color: #d8f3ff;*/
+    font-family: sans-serif;
+}
+#page{
+    width: 800px;
+    margin: 0 auto;
+    /*background-color: #fffff7;*/
+}
+
+.tplHead{
+    background-color: #D8D8D8;
+    color: #1E164A;
+}
+
+.content{
+    min-height: 500px;
+}
+
+.tplDialog{
+    width: 80%;
+    background-color: #fffff7;
+    vertical-align: bottom;
+    /*border: 3px solid #737373;*/
+    border-left: 5px solid #D8D8D8;
+}
+
+.tplSidebar{
+    vertical-align: top;
+    background-color: #D8D8D8;
+}
+
+.tplInput{
+    width: 80%;
+}
+
+.tplNavigation{
+    vertical-align: top;
+    background-color: #D8D8D8;
+}
+
+.usrbox {
+    background-color: #636B80;
+    font-size: 12px;
+    color: #fff;
+    /* border: 5px solid #F3F3F3; */
+    border-top: none;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+.inputField {
+    min-height: 100px;
+    border:  5px solid #D8D8D8;
+    border-right: none;
+    font-size: 12px;
+    font-family: Arial, serif;
+    padding: 5px;
+    background-color: #fff;
+    color: #000;
+}
+.inputField:focus {
+    outline: none;
+    background-color: #f7f7f7;
+}
+
+.logo>span:nth-child(1){
+    font-size: 30px;
+    padding-left: 15px;
+    padding-right: 0px;
+}
+.logo>span:nth-child(2){
+    font-size: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #fff;
+    background-color: #636B80;
+}
+.logo>span:nth-child(3){
+    font-size: 12px;
+    color: #fff;
+}
+
+.btn_simple {
+    background-color: #636B80;
+    font-size: 12px;
+    color: #fff;
+     /*border: 5px solid #F3F3F3;*/
+    /*border-top: none;*/
+    padding: 3px;
+    margin: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

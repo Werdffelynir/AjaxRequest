@@ -17,13 +17,17 @@
 
 <div id="page">
 
-    <div class="container"></div>
 
-    <form id="simple_form" action="server.php" method="post">
+    <h1>File Upload</h1>
+
+    <form name="simple_form">
         <input name="upload_file" type="file">
         <input type="submit" value="Send">
     </form>
-    
+
+    <h2>Result:</h2>
+
+    <div class="container"><div class="progress"></div></div>
 
 </div>
 
@@ -34,31 +38,23 @@
 
 
     var container = document.querySelector('.container'),
-        form = document.getElementById('simple_form');
+        progress = document.querySelector('.progress'),
+        form = document.forms.simple_form;
 
     form.onsubmit = function(event){
         event.preventDefault();
+
         var file = document.querySelector('input[name=upload_file]');
-        console.log(file);
-        AjUpload('upload.php', file, onProgress, onSuccess, onError);
+        AjUpload('upload.php', file, onProgress, onComplete);
     };
 
     function onProgress(xhr, event){
-        console.log("onProgress", xhr);
-        console.log("onProgress", event);
+        progress.innerHTML = "<p>Progress: " + event['loaded'] + " / " + event['total'] + "</p>";
     }
-    function onSuccess(status, response){
-        console.log("onSuccess", status);
-        console.log("onSuccess", response);
+    function onComplete(status, response, xhr, event){
+        var log = "<h3>Complete. Status code: "+status+"</h3> response:<br><pre>" + response + "</pre>";
+        container.insertAdjacentHTML('beforeend', log);
     }
-    function onError(status, xhr, event){
-        console.log("onError", status);
-        console.log("onError", xhr);
-        console.log("onError", event);
-    }
-
-
-
 
 </script>
 </body>
